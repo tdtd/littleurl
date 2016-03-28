@@ -4,9 +4,14 @@
 
 'use strict';
 
-import {EventEmitter} from 'events';
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _events = require('events');
+
 var Redirect = require('./redirect.model');
-var RedirectEvents = new EventEmitter();
+var RedirectEvents = new _events.EventEmitter();
 
 // Set max event listeners (0 == unlimited)
 RedirectEvents.setMaxListeners(0);
@@ -24,10 +29,12 @@ for (var e in events) {
 }
 
 function emitEvent(event) {
-  return function(doc) {
+  return function (doc) {
     RedirectEvents.emit(event + ':' + doc._id, doc);
     RedirectEvents.emit(event, doc);
-  }
+  };
 }
 
-export default RedirectEvents;
+exports['default'] = RedirectEvents;
+module.exports = exports['default'];
+//# sourceMappingURL=redirect.events.js.map

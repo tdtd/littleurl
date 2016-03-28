@@ -1,10 +1,10 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /new/              ->  index
- * POST    /new/              ->  create
- * GET     /new//:id          ->  show
- * PUT     /new//:id          ->  update
- * DELETE  /new//:id          ->  destroy
+ * GET     /newurl/              ->  index
+ * POST    /newurl/              ->  create
+ * GET     /newurl//:id          ->  show
+ * PUT     /newurl//:id          ->  update
+ * DELETE  /newurl//:id          ->  destroy
  */
 
 'use strict';
@@ -23,9 +23,9 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _newModel = require('./new.model');
+var _newurlModel = require('./newurl.model');
 
-var _newModel2 = _interopRequireDefault(_newModel);
+var _newurlModel2 = _interopRequireDefault(_newurlModel);
 
 var _http = require('http');
 
@@ -40,8 +40,8 @@ function respondWithResult(res, statusCode) {
   return function (entity) {
     if (entity) {
       var finEnt = entity;
-      finEnt.short_url = "https://littleurl.herokuapp.com/" + entity._id;
-      delete entity._id;
+      finEnt.shortUrl = "https://littleurl.herokuapp.com/" + entity._id;
+      entity._id = undefined;
       res.status(statusCode).json(entity);
     }
   };
@@ -87,7 +87,7 @@ function handleRedirect(res, statusCode) {
   statusCode = statusCode || 200;
   return function (entity) {
     if (entity) {
-      res.redirect(entity.original_url);
+      res.redirect(entity.originalUrl);
     }
   };
 }
@@ -109,30 +109,30 @@ function formatUrl(url) {
 // Gets a list of News
 
 function index(req, res) {
-  return _newModel2['default'].find().exec().then(respondWithResult(res))['catch'](handleError(res));
+  return _newurlModel2['default'].find().exec().then(respondWithResult(res))['catch'](handleError(res));
 }
 
 function redirectURL(req, res) {
   var id = req.params.id;
-  return _newModel2['default'].findById(id).exec().then(handleEntityNotFound(res)).then(handleRedirect(res))['catch'](handleError(res));
+  return _newurlModel2['default'].findById(id).exec().then(handleEntityNotFound(res)).then(handleRedirect(res))['catch'](handleError(res));
 }
 
 function newURL(req, res) {
-  var path = req.path.substr(5);
+  var path = req.path.substr(8);
   if (checkUrl(path)) {
     path = formatUrl(path);
     (0, _requestPromise2['default'])(path).then(function () {
-      _newModel2['default'].findURL(path, function (err, news) {
+      _newurlModel2['default'].findURL(path, function (err, news) {
         if (err) {
           return handleError(res, err);
         }
-        if (news.length < 0) {
-          return _newModel2['default'].create({ 'original_url': path }).then(respondWithResult(res, 201))['catch'](handleError(res));
+        if (news.length === 0) {
+          return _newurlModel2['default'].create({ 'originalUrl': path }).then(respondWithResult(res, 201))['catch'](handleError(res));
         } else {
           var found = news[0];
           var id = found._id;
           found._id = undefined;
-          found.short_url = "https://littleurl.herokuapp.com/" + id;
+          found.shortUrl = "https://littleurl.herokuapp.com/" + id;
 
           return res.status(200).json(found);
         }
@@ -148,6 +148,6 @@ function newURL(req, res) {
 // Creates a new New in the DB
 
 function create(req, res) {
-  return _newModel2['default'].create(req.body).then(respondWithResult(res, 201))['catch'](handleError(res));
+  return _newurlModel2['default'].create(req.body).then(respondWithResult(res, 201))['catch'](handleError(res));
 }
-//# sourceMappingURL=new.controller.js.map
+//# sourceMappingURL=newurl.controller.js.map

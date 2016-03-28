@@ -1,15 +1,13 @@
 'use strict';
 
 var express = require('express');
-var controller = require('./new.controller');
+var controller = require('./newurl.controller');
 
 var router = express.Router();
 
-router.get('/new/', controller.index);
+router.get('/newurl', controller.index);
 router.get('/:id', controller.redirectURL);
-router.get('/new/:url*', controller.newURL);
-/*
-router.post('/:id', controller.test);
-*/
+router.get('/newurl/:url*', controller.newURL);
+
 module.exports = router;
 //# sourceMappingURL=index.js.map
